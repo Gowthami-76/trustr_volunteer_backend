@@ -13,6 +13,7 @@ const authenticateToken = require("./middlewares/authenticateToken");
 const userController = require("./controllers/userController");
 const associatedVolunteer = require("./controllers/associatedVolunteer");
 const enrollPatients = require("./controllers/enrollUsers");
+const patientRoutes = require("./Routes/patientRoutes");
 
 // Configure the AWS SDK with your access keys
 AWS.config.loadFromPath("./aws-config.json");
