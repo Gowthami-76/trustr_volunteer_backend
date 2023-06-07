@@ -1,0 +1,33 @@
+{
+  "name": "volunteer_application",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "dev": "npm run init_logs && NODE_ENV=development forever --minUptime 1000 --spinSleepTime 1000 Server.js",
+    "init_logs": "rimraf $(eval echo ~$USER)/.forever/api_out.log && touch $(eval echo ~$USER)/.forever/api_out.log",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "aws-sdk": "^2.1392.0",
+    "bcrypt": "^5.1.0",
+    "body-parser": "^1.20.2",
+    "cookie-parser": "^1.4.6",
+    "dotenv": "^16.1.4",
+    "express": "^4.18.2",
+    "jsonwebtoken": "^9.0.0",
+    "multer": "^1.4.5-lts.1",
+    "multiparty": "^4.2.3",
+    "node-uuid": "^1.4.8",
+    "nodemon": "^2.0.22",
+    "pg": "^8.11.0",
+    "pg-hstore": "^2.3.4",
+    "rimraf": "^5.0.1",
+    "sequelize": "^6.31.1",
+    "sequelize-cli": "^6.6.0",
+    "uuid": "^9.0.0"
+  }
+}
