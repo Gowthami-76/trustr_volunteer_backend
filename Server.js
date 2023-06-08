@@ -34,9 +34,11 @@ db.sequelize
   });
 
 //routes for the user API
+app.get("/", (req, res) => {
+  res.send("Welcome to the Trustr Volunteer App");
+});
 app.use("/api/users", userRoutes);
 app.use(patientRoutes);
-
 app.get("/api/whoami", authenticateToken, whoamiController.getVolunteerInfo);
 app.get("/api/users", authenticateToken, userController.getUserByAadhaarNumber);
 app.get("/api/users", userController.getAllUsers);
