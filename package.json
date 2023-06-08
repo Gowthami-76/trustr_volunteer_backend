@@ -4,6 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
+    "dev_win": "SET NODE_ENV=development&&forever --minUptime 1000 --spinSleepTime 1000 Server.js",
     "dev": "npm run init_logs && NODE_ENV=development forever --minUptime 1000 --spinSleepTime 1000 Server.js",
     "init_logs": "rimraf $(eval echo ~$USER)/.forever/api_out.log && touch $(eval echo ~$USER)/.forever/api_out.log",
     "test": "echo \"Error: no test specified\" && exit 1"
