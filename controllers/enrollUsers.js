@@ -8,7 +8,7 @@ async function enrollPatients(req, res) {
     var form = new multiparty.Form();
     form.parse(req, async function (err, fields, files) {
       if (err) {
-        return response.status(415).send({
+        return res.status(415).send({
           success: false,
           message: "unsupported content-type",
         });

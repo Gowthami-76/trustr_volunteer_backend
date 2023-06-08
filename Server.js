@@ -16,7 +16,7 @@ const enrollPatients = require("./controllers/enrollUsers");
 const patientRoutes = require("./Routes/patientRoutes");
 
 // Configure the AWS SDK with your access keys
-AWS.config.loadFromPath("./aws-config.json");
+AWS.config.loadFromPath("./environment/aws-config.json");
 
 //middleware
 app.use(express.json());
