@@ -1,7 +1,6 @@
 "use strict";
 
 const { Model } = require("sequelize");
-var dbHelper = require("../helpers/dbHelper");
 
 module.exports = (sequelize, DataTypes) => {
   class UserVital extends Model {
