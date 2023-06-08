@@ -1,9 +1,0 @@
-{
-  "development": {
-    "url": "postgres://trustrdb:9unSM1TC7g9GGzZLIv@trustrdb.postgres.database.azure.com:5432/volunteerapp-dev",
-    "url1": "postgres://postgres:postgres@localhost:5432/trustrdb",
-
-    "dialect": "postgres",
-    "operatorsAliases": false
-  }
-}
