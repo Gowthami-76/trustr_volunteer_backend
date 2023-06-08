@@ -42,6 +42,9 @@ async function enrollPatients(req, res) {
       if (requestFiles.aadhaar_front) {
         fileHelper.addUserImageS3("volunteerapp", requestFiles.aadhaar_front, aadhaar_number);
       }
+      if (requestFiles.aadhaar_back) {
+        fileHelper.addUserImageS3("volunteerapp", requestFiles.aadhaar_back, aadhaar_number);
+      }
 
       if (existingUser) {
         return res.status(400).json({ message: "Aadhaar number already exists" });
