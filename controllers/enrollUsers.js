@@ -1,5 +1,6 @@
 const db = require("../models");
 const multiparty = require("multiparty");
+const fileHelper = require("../helpers/fileHelper");
 const User = db.users;
 
 async function enrollPatients(req, res) {
@@ -36,6 +37,11 @@ async function enrollPatients(req, res) {
           aadhaar_number: aadhaar_number,
         },
       });
+
+      //add images to s3 bucket
+      if (requestFiles.aadhaar_front) {
+        fileHelper.addUserImageS3("volunteerapp", requestFiles.aadhaar_front, aadhaar_number);
+      }
 
       if (existingUser) {
         return res.status(400).json({ message: "Aadhaar number already exists" });
