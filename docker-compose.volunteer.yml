@@ -1,0 +1,18 @@
+version: "3.8"
+services:
+  trustr-vol:
+    image: trustr-volunteer:v1.1
+    container_name: trustr-vol
+    volumes:
+      - ./environment:/app/environment
+    ports:
+      - "6046:8080"
+    networks:
+      - internal
+      - proxy
+
+networks:
+  proxy:
+    external: true
+  internal:
+    external: true
