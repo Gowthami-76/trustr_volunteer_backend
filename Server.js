@@ -7,6 +7,7 @@ const PORT = process.env.PORT || 8080;
 const app = express();
 const AWS = require("aws-sdk");
 const cookieParser = require("cookie-parser");
+const cors = require("cors"); // Add this line to import the 'cors' package
 
 const whoamiController = require("./controllers/whoamiController");
 const authenticateToken = require("./middlewares/authenticateToken");
@@ -22,6 +23,7 @@ AWS.config.loadFromPath("./environment/aws-config.json");
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
+app.use(cors()); // Add this line to enable CORS
 
 //synchronizing the database and forcing it to false so we dont lose data
 db.sequelize
