@@ -5,12 +5,14 @@ const Volunteer = db.volunteers;
 
 const signup = async (req, res) => {
   try {
-    const { phone, password, first_name, last_name, gender } = req.body;
+    const { phone, password, first_name, last_name, gender, email, date_of_birth } = req.body;
     const data = {
       phone,
       password: await bcrypt.hash(password, 10),
       first_name,
       last_name,
+      email,
+      date_of_birth,
       gender,
     };
     console.log({ phone, password });

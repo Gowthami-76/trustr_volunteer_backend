@@ -7,7 +7,7 @@ const PORT = process.env.PORT || 8080;
 const app = express();
 const AWS = require("aws-sdk");
 const cookieParser = require("cookie-parser");
-const cors = require("cors"); // Add this line to import the 'cors' package
+const cors = require("cors");
 
 const whoamiController = require("./controllers/whoamiController");
 const authenticateToken = require("./middlewares/authenticateToken");
@@ -23,7 +23,7 @@ AWS.config.loadFromPath("./environment/aws-config.json");
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
-app.use(cors()); // Add this line to enable CORS
+app.use(cors());
 
 //synchronizing the database and forcing it to false so we dont lose data
 db.sequelize
@@ -42,7 +42,7 @@ app.get("/", (req, res) => {
 app.use("/api/users", userRoutes);
 app.use(patientRoutes);
 app.get("/api/whoami", authenticateToken, whoamiController.getVolunteerInfo);
-app.get("/api/users", authenticateToken, userController.getUserByAadhaarNumber);
+app.get("/api/users/getUserById", authenticateToken, userController.getUserByAadhaarNumber);
 app.get("/api/users", userController.getAllUsers);
 app.get(
   "/api/users/associated-volunteer",
