@@ -12,13 +12,13 @@ const getUserByAadhaarNumber = async (req, res) => {
     });
 
     if (!user) {
-      return res.status(404).json({ error: "User not found" });
+      return res.status(404).send({ success: false, message: "User not found" });
     }
 
     return res.json(user);
   } catch (error) {
     console.error(error);
-    return res.status(500).json({ error: "Internal Server Error" });
+    return res.status(500).send({ success: false, message: "Internal Server Error" });
   }
 };
 
@@ -28,13 +28,13 @@ const getAllUsers = async (req, res) => {
     const users = await User.findAll();
 
     if (users.length === 0) {
-      return res.status(404).json({ error: "No users found" });
+      return res.status(404).send({ success: false, message: "No users found" });
     }
 
     return res.json(users);
   } catch (error) {
     console.error(error);
-    return res.status(500).json({ error: "Internal Server Error" });
+    return res.status(500).send({ success: false, message: "Internal Server Error" });
   }
 };
 

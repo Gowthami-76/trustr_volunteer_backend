@@ -1,7 +1,5 @@
-// importing modules
 const express = require("express");
 const db = require("../models");
-// Assigning db.volunteers to Volunteer variable
 const Volunteer = db.volunteers;
 
 // Function to check if phone number already exists in the database
@@ -18,7 +16,7 @@ const saveUser = async (req, res, next) => {
 
     // If phone number exists in the database, respond with a status of 409
     if (existingVolunteer) {
-      return res.status(409).send("Phone number already exists");
+      return res.status(409).send({ success: false, message: "Phone number already exists" });
     }
 
     next();

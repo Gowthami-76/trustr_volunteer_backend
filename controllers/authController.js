@@ -2,6 +2,7 @@ const bcrypt = require("bcrypt");
 const db = require("../models");
 const jwt = require("jsonwebtoken");
 const Volunteer = db.volunteers;
+const { addToBlacklist } = require("../middlewares/tokenBlacklist");
 
 const signup = async (req, res) => {
   try {
@@ -15,24 +16,24 @@ const signup = async (req, res) => {
       date_of_birth,
       gender,
     };
-    console.log({ phone, password });
+
     const volunteer = await Volunteer.create(data);
 
     if (volunteer) {
-      let token = jwt.sign({ id: volunteer.id }, process.env.secretKey, {
-        expiresIn: 1 * 24 * 60 * 60 * 1000,
+      const token = jwt.sign({ id: volunteer.id }, process.env.secretKey, {
+        expiresIn: "5m", // Token valid for 5 minute
       });
 
-      res.cookie("jwt", token, { maxAge: 1 * 24 * 60 * 60, httpOnly: true });
-      console.log("volunteer", JSON.stringify(volunteer, null, 2));
-      console.log(token);
-      // Send volunteer details
-      return res.status(201).send(volunteer);
+      // console.log("volunteer", JSON.stringify(volunteer, null, 2));
+      // console.log(token);
+
+      return res.status(201).send({ volunteer, token });
     } else {
-      return res.status(409).send("Details are not correct");
+      return res.status(409).send({ success: false, message: "Details are not correct" });
     }
   } catch (error) {
     console.log(error);
+    return res.status(500).send({ success: false, message: "Internal Server Error" });
   }
 };
 
@@ -53,21 +54,24 @@ const login = async (req, res) => {
     const isSame = await bcrypt.compare(password, volunteer.password);
 
     if (isSame) {
-      const token = jwt.sign({ id: volunteer.id }, process.env.secretKey, {
-        expiresIn: "1d",
+      const token = jwt.sign({ id: volunteer.dataValues.volunteer_id }, process.env.secretKey, {
+        expiresIn: "5m",
       });
 
-      res.cookie("jwt", token, { maxAge: 1 * 24 * 60 * 60 * 1000, httpOnly: true });
+      const oldToken = req.headers["x-access-token"];
+      addToBlacklist(oldToken);
 
-      return res.status(200).send({ volunteer });
+      console.log("Token ID:", volunteer.dataValues.volunteer_id);
+
+      return res.status(200).send({ volunteer, token: token });
     } else {
       return res
         .status(401)
-        .send({ success: false, message: "Please Enter the valid password and try again" });
+        .send({ success: false, message: "Please enter the valid password and try again" });
     }
   } catch (error) {
     console.log(error);
-    return res.status(500).send("Internal Server Error");
+    return res.status(500).send({ success: false, message: "Internal Server Error" });
   }
 };
 

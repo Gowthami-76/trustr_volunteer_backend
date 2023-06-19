@@ -10,11 +10,10 @@ const cookieParser = require("cookie-parser");
 const cors = require("cors");
 
 const whoamiController = require("./controllers/whoamiController");
-const authenticateToken = require("./middlewares/authenticateToken");
 const userController = require("./controllers/userController");
 const associatedVolunteer = require("./controllers/associatedVolunteer");
 const enrollPatients = require("./controllers/enrollUsers");
-const patientRoutes = require("./Routes/patientRoutes");
+const validateToken = require("./middlewares/validateToken");
 
 // Configure the AWS SDK with your access keys
 AWS.config.loadFromPath("./environment/aws-config.json");
@@ -35,20 +34,14 @@ db.sequelize
     console.error("Error synchronizing database:", error);
   });
 
-//routes for the user API
 app.get("/", (req, res) => {
   res.send("Welcome to the Trustr Volunteer App");
 });
 app.use("/api/users", userRoutes);
-app.use(patientRoutes);
-app.get("/api/whoami", authenticateToken, whoamiController.getVolunteerInfo);
-app.get("/api/users/getUserById", authenticateToken, userController.getUserByAadhaarNumber);
-app.get("/api/users", userController.getAllUsers);
-app.get(
-  "/api/users/associated-volunteer",
-  authenticateToken,
-  associatedVolunteer.getAssociatedUsers
-);
-app.post("/api/add-user", authenticateToken, enrollPatients.enrollPatients);
+app.get("/api/whoami", validateToken, whoamiController.getVolunteerInfo);
+app.get("/api/users/getUserById", validateToken, userController.getUserByAadhaarNumber);
+app.get("/users", userController.getAllUsers);
+app.get("/api/users/associated-volunteer", validateToken, associatedVolunteer.getAssociatedUsers);
+app.post("/api/add-user", validateToken, enrollPatients.enrollPatients);
 
 app.listen(PORT, () => console.log(`Server is connected on ${PORT}`));

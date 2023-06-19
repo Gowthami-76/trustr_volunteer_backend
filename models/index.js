@@ -1,4 +1,3 @@
-//importing modules
 const { Sequelize, DataTypes } = require("sequelize");
 
 //Database connection with dialect of postgres specifying the database we are using

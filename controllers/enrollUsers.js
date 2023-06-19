@@ -2,6 +2,7 @@ const db = require("../models");
 const multiparty = require("multiparty");
 const fileHelper = require("../helpers/fileHelper");
 const User = db.users;
+const Volunteer = db.volunteers;
 
 async function enrollPatients(req, res) {
   try {
@@ -32,13 +33,25 @@ async function enrollPatients(req, res) {
         enrollment_status,
         volunteer_id,
       } = requestObj;
+
+      // Check if volunteer_id is present
+      if (!volunteer_id) {
+        return res.status(400).send({ success: false, message: "volunteer_id is required" });
+      }
+
+      // Check if volunteer with the given ID exists
+      const existingVolunteer = await Volunteer.findByPk(volunteer_id);
+      if (!existingVolunteer) {
+        return res.status(400).send({ success: false, message: "Volunteer not found" });
+      }
+
       const existingUser = await User.findOne({
         where: {
           aadhaar_number: aadhaar_number,
         },
       });
 
-      //add images to s3 bucket
+      // add images to s3 bucket
       if (requestFiles.aadhaar_front) {
         fileHelper.addUserImageS3("volunteerapp", requestFiles.aadhaar_front, aadhaar_number);
       }
@@ -47,7 +60,7 @@ async function enrollPatients(req, res) {
       }
 
       if (existingUser) {
-        return res.status(400).json({ message: "Aadhaar number already exists" });
+        return res.status(400).send({ success: false, message: "Aadhaar number already exists" });
       }
 
       const user = await User.create({
@@ -61,11 +74,11 @@ async function enrollPatients(req, res) {
         volunteer_id: volunteer_id,
       });
 
-      return res.status(201).json(user);
+      return res.status(201).send(user);
     });
   } catch (error) {
     console.log(error);
-    return res.status(500).send("Internal Server Error");
+    return res.status(500).send({ success: false, message: "Internal Server Error" });
   }
 }
 
