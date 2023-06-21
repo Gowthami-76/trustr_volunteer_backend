@@ -25,6 +25,7 @@ db.sequelize = sequelize;
 //connecting to model
 db.volunteers = require("./volunteer")(sequelize, DataTypes);
 db.users = require("./user")(sequelize, DataTypes);
+db.userVitals = require("./userVitals")(sequelize, DataTypes);
 
 //exporting the module
 module.exports = db;

@@ -1,67 +1,60 @@
-var userService = require("../services/UserService")();
-var binahService = require("../services/BinahService")();
+const db = require("../models");
+const UserVital = db.userVitals;
+const User = db.users;
 
-module.exports.saveBinah = async function (req, res) {
-  const user_id = req.query.user_id;
-  userService
-    .getUserById(user_id, req)
-    .then(async function (user) {
-      if (!user) {
-        return res.status(404).send({
-          success: false,
-          message: "User with provided user_id does not exist",
-        });
-      } else {
-        const vitals = req.body;
-        binahService.addUserBinahVitals(user_id, vitals).then(function () {
-          return res.status(200).send({ success: true, message: `success` });
-        });
-      }
-    })
-    .error(function (error) {
-      console.log(error);
-      return res.status(500).send({
-        success: false,
-        message: "Error while saving Binah vitals",
-      });
-    })
-    .catch(function (error) {
-      console.log(error);
-      return res.status(500).send({
-        success: false,
-        message: "Error while saving Binah vitals",
-      });
+module.exports.saveBinah = async (req, res) => {
+  try {
+    const { hr, spo2, br, sdnn, sl, bp, user_id } = req.body;
+
+    // Check if user_id is present
+    if (!user_id) {
+      return res.status(400).send({ success: false, message: "user_id is required" });
+    }
+
+    // Check if user with the given ID exists
+    const existingUser = await User.findByPk(user_id);
+    if (!existingUser) {
+      return res.status(400).send({ success: false, message: "User not found" });
+    }
+
+    const binahData = await UserVital.create({
+      hr: hr,
+      spo2: spo2,
+      br: br,
+      sdnn: sdnn,
+      sl: sl,
+      bp: bp,
+      user_id: user_id,
     });
+
+    return res.status(201).send(binahData);
+  } catch (error) {
+    console.log(error);
+    return res.status(500).send({ success: false, message: "Internal Server Error" });
+  }
 };
 
-module.exports.getBinah = async function (req, res) {
-  const user_id = req.query.user_id;
-  userService
-    .getUserById(user_id, req)
-    .then(async function (user) {
-      if (!user) {
-        return res.status(404).send({
-          success: false,
-          message: "User with provided user_id does not exist",
-        });
-      } else {
-        binahService.getUserBinahVitals(user_id).then(function (vitals) {
-          return res.status(200).json({ success: true, message: "success", data: vitals });
-        });
-      }
-    })
-    .error(function (error) {
-      console.log(error);
-      return res.status(500).send({
-        success: false,
-        message: "Error while fetching Binah details",
-      });
-    })
-    .catch(function (error) {
-      console.log(error);
-      return res.status(500).send({
-        success: false,
-        message: "Error while fetching Binah details",
-      });
+module.exports.getBinahData = async (req, res) => {
+  try {
+    const { user_id } = req.query;
+
+    if (!user_id) {
+      return res.status(400).send({ success: false, message: "user_id is required" });
+    }
+
+    const binahData = await UserVital.findAll({
+      where: { user_id: user_id },
     });
+
+    if (binahData.length === 0) {
+      return res
+        .status(404)
+        .send({ success: false, message: "No user vitals found for the given user_id" });
+    }
+
+    return res.status(200).json(binahData);
+  } catch (error) {
+    console.log(error);
+    return res.status(500).send({ success: false, message: "Internal Server Error" });
+  }
 };

@@ -1,21 +1,37 @@
 const db = require("../models");
 const User = db.users;
+const { Op } = require("sequelize");
 
-// Get a single user by Aadhaar number
+// Get a single user by Aadhaar number / firstName / lastName
+
 const getUserByAadhaarNumber = async (req, res) => {
   try {
-    const { aadhaarNumber } = req.query;
-    const user = await User.findOne({
-      where: {
-        aadhaar_number: aadhaarNumber,
-      },
+    const { aadhaarNumber, firstName, lastName } = req.query;
+
+    if (!aadhaarNumber && !firstName && !lastName) {
+      return res.status(404).send({ success: false, message: "No user found" });
+    }
+
+    let whereClause = {};
+    if (aadhaarNumber) {
+      whereClause.aadhaar_number = aadhaarNumber;
+    }
+    if (firstName) {
+      whereClause.first_name = { [Op.iLike]: firstName.toLowerCase() };
+    }
+    if (lastName) {
+      whereClause.last_name = { [Op.iLike]: lastName.toLowerCase() };
+    }
+
+    const users = await User.findAll({
+      where: whereClause,
     });
 
-    if (!user) {
+    if (users.length === 0) {
       return res.status(404).send({ success: false, message: "User not found" });
     }
 
-    return res.json(user);
+    return res.json(users);
   } catch (error) {
     console.error(error);
     return res.status(500).send({ success: false, message: "Internal Server Error" });

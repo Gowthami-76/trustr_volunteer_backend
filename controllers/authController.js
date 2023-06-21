@@ -55,7 +55,7 @@ const login = async (req, res) => {
 
     if (isSame) {
       const token = jwt.sign({ id: volunteer.dataValues.volunteer_id }, process.env.secretKey, {
-        expiresIn: "20m",
+        expiresIn: "1d",
       });
 
       const oldToken = req.headers["x-access-token"];

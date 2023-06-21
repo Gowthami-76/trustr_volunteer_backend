@@ -13,7 +13,7 @@ module.exports = (sequelize, DataTypes) => {
 
   UserVital.init(
     {
-      user_vital_id: {
+      id: {
         type: DataTypes.INTEGER,
         allowNull: false,
         primaryKey: true,
