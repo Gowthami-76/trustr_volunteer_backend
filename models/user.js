@@ -48,6 +48,14 @@ module.exports = (sequelize, DataTypes) => {
         type: DataTypes.DATE,
         allowNull: true,
       },
+      address: {
+        type: DataTypes.STRING,
+        allowNull: true,
+      },
+      zipcode: {
+        type: DataTypes.TEXT,
+        allowNull: true,
+      },
       enrollment_status: {
         type: DataTypes.ENUM("active", "pending"),
         allowNull: true,

@@ -1,10 +1,10 @@
 version: "3.8"
 services:
   trustr-vol:
-    image: trustr-volunteer:v1.1
+    image: inndata/trustr-volunteer:latest
     container_name: trustr-vol
     volumes:
-      - ./environment:/app/environment
+      - /trustr-jenkins/environment:/app/environment
     ports:
       - "6046:8080"
     networks:
