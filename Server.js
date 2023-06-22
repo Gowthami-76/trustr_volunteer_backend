@@ -33,7 +33,7 @@ db.sequelize
 app.get("/", (req, res) => {
   res.send("Welcome to the Trustr Volunteer App");
 });
-app.use("/api/users", userRoutes);
+app.use("", userRoutes);
 app.get("/api/whoami", validateToken, whoamiController.getVolunteerInfo);
 app.post("/api/add-user", validateToken, enrollPatients.enrollPatients);
 app.get("/users", userController.getAllUsers);
