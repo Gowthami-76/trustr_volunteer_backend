@@ -10,14 +10,14 @@ module.exports = function () {
         where: whereCondition,
       });
     },
-    addUserBinahVitals: function (userId, vitals) {
-      const { hr, spo2, br, sdnn, sl, bp } = vitals;
+    addUserBinahVitals: function (vitals) {
+      const { hr, spo2, br, sl, bp } = vitals;
       return binahModel.create({
         user_id: userId,
+        volunteer_id: volunteerId,
         hr: hr,
         spo2: spo2,
         br: br,
-        sdnn: sdnn,
         sl: sl,
         bp: bp,
       });

@@ -2,13 +2,13 @@ const db = require("../models");
 const User = db.users;
 const { Op } = require("sequelize");
 
-// Get a single user by Aadhaar number / firstName / lastName
+// Get a single user by Aadhaar number / firstName / lastName / userId
 
 const getUserByAadhaarNumber = async (req, res) => {
   try {
-    const { aadhaarNumber, firstName, lastName } = req.query;
+    const { aadhaarNumber, firstName, lastName, userId } = req.query;
 
-    if (!aadhaarNumber && !firstName && !lastName) {
+    if (!aadhaarNumber && !firstName && !lastName && !userId) {
       return res.status(404).send({ success: false, message: "No user found" });
     }
 
@@ -21,6 +21,9 @@ const getUserByAadhaarNumber = async (req, res) => {
     }
     if (lastName) {
       whereClause.last_name = { [Op.iLike]: lastName.toLowerCase() };
+    }
+    if (userId) {
+      whereClause.user_id = userId;
     }
 
     const users = await User.findAll({

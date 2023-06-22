@@ -1,10 +1,11 @@
 const db = require("../models");
 const UserVital = db.userVitals;
 const User = db.users;
+const Volunteer = db.volunteers;
 
 module.exports.saveBinah = async (req, res) => {
   try {
-    const { hr, spo2, br, sdnn, sl, bp, user_id } = req.body;
+    const { hr, spo2, br, sl, bp, user_id, volunteer_id } = req.body;
 
     // Check if user_id is present
     if (!user_id) {
@@ -17,14 +18,25 @@ module.exports.saveBinah = async (req, res) => {
       return res.status(400).send({ success: false, message: "User not found" });
     }
 
+    // Check if volunteer_id is present
+    if (!volunteer_id) {
+      return res.status(400).send({ success: false, message: "volunteer_id is required" });
+    }
+
+    // Check if volunteer with the given ID exists
+    const existingVolunteer = await Volunteer.findByPk(volunteer_id);
+    if (!existingVolunteer) {
+      return res.status(400).send({ success: false, message: "Volunteer not found" });
+    }
+
     const binahData = await UserVital.create({
       hr: hr,
       spo2: spo2,
       br: br,
-      sdnn: sdnn,
       sl: sl,
       bp: bp,
       user_id: user_id,
+      volunteer_id: volunteer_id,
     });
 
     return res.status(201).send(binahData);

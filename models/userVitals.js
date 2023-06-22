@@ -8,6 +8,9 @@ module.exports = (sequelize, DataTypes) => {
       UserVital.belongsTo(models.User, {
         foreignKey: "user_id",
       });
+      UserVital.belongsTo(models.Volunteer, {
+        foreignKey: "volunteer_id",
+      });
     }
   }
 
@@ -27,6 +30,14 @@ module.exports = (sequelize, DataTypes) => {
           key: "user_id",
         },
       },
+      volunteer_id: {
+        type: DataTypes.INTEGER,
+        allowNull: false,
+        references: {
+          model: "volunteers",
+          key: "volunteer_id",
+        },
+      },
       hr: {
         type: DataTypes.STRING,
         allowNull: false,
@@ -36,10 +47,6 @@ module.exports = (sequelize, DataTypes) => {
         allowNull: false,
       },
       br: {
-        type: DataTypes.STRING,
-        allowNull: false,
-      },
-      sdnn: {
         type: DataTypes.STRING,
         allowNull: false,
       },
@@ -57,7 +64,6 @@ module.exports = (sequelize, DataTypes) => {
         defaultValue: DataTypes.NOW,
       },
     },
-
     {
       sequelize,
       modelName: "UserVital",
@@ -65,14 +71,6 @@ module.exports = (sequelize, DataTypes) => {
       freezeTableName: true,
       underscored: true,
       timestamps: false,
-      classMethods: {
-        associate: function (models) {
-          UserVital.belongsTo(models.users, {
-            as: "patient_id",
-            foreignKey: "user_id",
-          });
-        },
-      },
     }
   );
 
