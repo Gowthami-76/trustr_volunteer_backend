@@ -31,6 +31,9 @@ const getAssociatedUsers = async (req, res) => {
         where: {
           volunteer_id: volunteerId,
         },
+        attributes: {
+          include: ["aadhaar_front", "aadhaar_back"], // Include the additional fields
+        },
       });
 
       if (users.length === 0) {
@@ -38,13 +41,10 @@ const getAssociatedUsers = async (req, res) => {
       }
 
       const formattedUsers = users.map((user) => {
+        const { user_id, ...userData } = user.toJSON();
         return {
-          user_id: user.user_id,
-          first_name: user.first_name,
-          last_name: user.last_name,
-          aadhaar_number: user.aadhaar_number,
-          volunteer_id: user.volunteer_id,
-          created_at: user.createdAt,
+          unique_id: user_id, // Set user_id as unique_id
+          ...userData, // Include all other fields except user_id
         };
       });
 
