@@ -37,6 +37,7 @@ app.use("", userRoutes);
 app.get("/api/whoami", validateToken, whoamiController.getVolunteerInfo);
 app.post("/api/enroll", validateToken, enrollPatients.enrollPatients);
 app.get("/users", userController.getAllUsers);
+app.get("/users/getSingleUser", validateToken, userController.getSingleUser);
 app.get("/api/users/getUserById", validateToken, userController.getUserByAadhaarNumber);
 app.get("/api/users/associatedVolunteer", validateToken, associatedVolunteer.getAssociatedUsers);
 app.post("/saveVitals", binahController.saveBinah);

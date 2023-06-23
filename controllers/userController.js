@@ -57,7 +57,30 @@ const getAllUsers = async (req, res) => {
   }
 };
 
+const getSingleUser = async (req, res) => {
+  try {
+    const userId = req.query.userId;
+    if (!userId) {
+      return res.status(400).json({ success: false, message: "User ID is required" });
+    }
+
+    const user = await User.findOne({
+      where: { user_id: userId },
+    });
+
+    if (!user) {
+      return res.status(404).send({ success: false, message: "User not found" });
+    }
+
+    return res.json(user);
+  } catch (error) {
+    console.error(error);
+    return res.status(500).send({ success: false, message: "Internal Server Error" });
+  }
+};
+
 module.exports = {
   getUserByAadhaarNumber,
   getAllUsers,
+  getSingleUser,
 };
