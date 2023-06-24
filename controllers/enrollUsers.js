@@ -74,7 +74,7 @@ async function enrollPatients(req, res) {
         volunteer_id: volunteer_id,
       });
 
-      return res.status(201).send(user);
+      return res.status(200).send(user);
     });
   } catch (error) {
     console.log(error);

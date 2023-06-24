@@ -27,7 +27,7 @@ const signup = async (req, res) => {
       // console.log("volunteer", JSON.stringify(volunteer, null, 2));
       // console.log(token);
 
-      return res.status(201).send({ volunteer, token });
+      return res.status(200).send({ volunteer, token });
     } else {
       return res.status(409).send({ success: false, message: "Details are not correct" });
     }

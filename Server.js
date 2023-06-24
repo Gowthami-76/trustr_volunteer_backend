@@ -35,6 +35,7 @@ app.get("/", (req, res) => {
 });
 app.use("", userRoutes);
 app.get("/api/whoami", validateToken, whoamiController.getVolunteerInfo);
+app.put("/api/whoami", validateToken, whoamiController.editVolunteerInfo);
 app.post("/api/enroll", validateToken, enrollPatients.enrollPatients);
 app.get("/users", userController.getAllUsers);
 app.get("/users/getSingleUser", validateToken, userController.getSingleUser);

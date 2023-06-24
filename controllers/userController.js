@@ -44,13 +44,27 @@ const getUserByAadhaarNumber = async (req, res) => {
 // Get all users
 const getAllUsers = async (req, res) => {
   try {
-    const users = await User.findAll();
+    const page = parseInt(req.query.page) || 1; // Get the page number from the query parameters, default to 1 if not provided
+    const limit = 10; // Number of records to show per page
+    const offset = (page - 1) * limit; // Calculate the offset based on the page number
 
-    if (users.length === 0) {
+    const users = await User.findAndCountAll({
+      limit,
+      offset,
+    });
+
+    if (users.count === 0) {
       return res.status(404).send({ success: false, message: "No users found" });
     }
 
-    return res.json(users);
+    const totalPages = Math.ceil(users.count / limit); // Calculate the total number of pages
+
+    return res.json({
+      users: users.rows,
+      totalUsers: users.count,
+      totalPages,
+      currentPage: page,
+    });
   } catch (error) {
     console.error(error);
     return res.status(500).send({ success: false, message: "Internal Server Error" });

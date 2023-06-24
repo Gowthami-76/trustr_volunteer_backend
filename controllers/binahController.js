@@ -39,7 +39,7 @@ module.exports.saveBinah = async (req, res) => {
       volunteer_id: volunteer_id,
     });
 
-    return res.status(201).send(binahData);
+    return res.status(200).send(binahData);
   } catch (error) {
     console.log(error);
     return res.status(500).send({ success: false, message: "Internal Server Error" });
