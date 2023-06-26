@@ -59,7 +59,7 @@ module.exports = (sequelize, DataTypes) => {
       },
       height: {
         type: DataTypes.FLOAT,
-        allowNull: false,
+        allowNull: true,
       },
       enrollment_status: {
         type: DataTypes.ENUM("active", "pending"),

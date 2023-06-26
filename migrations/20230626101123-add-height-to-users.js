@@ -5,7 +5,7 @@ module.exports = {
     await queryInterface.addColumn("users", "height", {
       type: Sequelize.FLOAT,
       defaultValue: 0,
-      allowNull: false,
+      allowNull: true,
     });
   },
 
