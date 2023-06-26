@@ -2,7 +2,7 @@ const bcrypt = require("bcrypt");
 const db = require("../models");
 const jwt = require("jsonwebtoken");
 const Volunteer = db.volunteers;
-const { addToBlacklist } = require("../middlewares/tokenBlacklist");
+const { addToBlacklist, isTokenBlacklisted } = require("../middlewares/tokenBlacklist");
 
 const signup = async (req, res) => {
   try {
@@ -55,15 +55,35 @@ const login = async (req, res) => {
 
     if (isSame) {
       const token = jwt.sign({ id: volunteer.dataValues.volunteer_id }, process.env.secretKey, {
-        expiresIn: "1d",
+        // expiresIn: null,
       });
 
       const oldToken = req.headers["x-access-token"];
       addToBlacklist(oldToken);
 
-      console.log("Token ID:", volunteer.dataValues.volunteer_id);
+      // await Volunteer.update(
+      //   {
+      //     token_version: volunteer.dataValues.token_version + 1,
+      //     token: token, // Update the token in the database
+      //   },
+      //   { where: { volunteer_id: volunteer.dataValues.volunteer_id } }
+      // );
 
-      return res.status(200).send({ volunteer, token: token });
+      // console.log(volunteer.dataValues.token_version, token);
+
+      // console.log("Token ID:", volunteer.dataValues.volunteer_id);
+
+      volunteer.token_version = volunteer.token_version ? volunteer.token_version + 1 : 1; // Increment the token_version or set it to 1 if it's undefined
+
+      volunteer.token = token; // Update the token in the volunteer object
+
+      await volunteer.save(); // Save the updated volunteer object to the database
+
+      console.log(volunteer.token_version, token);
+
+      console.log("Token ID:", volunteer.volunteer_id);
+
+      return res.status(200).send({ volunteer });
     } else {
       return res
         .status(401)
