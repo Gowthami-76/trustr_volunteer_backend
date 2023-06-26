@@ -8,6 +8,7 @@ module.exports = (sequelize, DataTypes) => {
       User.belongsTo(models.Volunteer, {
         foreignKey: "volunteer_id",
       });
+      User.hasMany(models.UserVital, { foreignKey: "user_id" });
     }
   }
 
@@ -55,6 +56,10 @@ module.exports = (sequelize, DataTypes) => {
       zipcode: {
         type: DataTypes.TEXT,
         allowNull: true,
+      },
+      height: {
+        type: DataTypes.FLOAT,
+        allowNull: false,
       },
       enrollment_status: {
         type: DataTypes.ENUM("active", "pending"),
