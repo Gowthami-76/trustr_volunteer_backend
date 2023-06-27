@@ -29,6 +29,7 @@ async function enrollPatients(req, res) {
         phone,
         aadhaar_number,
         gender,
+        height,
         date_of_birth,
         enrollment_status,
         volunteer_id,
@@ -72,6 +73,7 @@ async function enrollPatients(req, res) {
         date_of_birth: date_of_birth,
         enrollment_status: enrollment_status,
         volunteer_id: volunteer_id,
+        height: height,
       });
 
       return res.status(200).send(user);
