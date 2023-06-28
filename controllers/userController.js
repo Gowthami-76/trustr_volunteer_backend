@@ -1,6 +1,7 @@
 const db = require("../models");
 const User = db.users;
 const { Op } = require("sequelize");
+const decryptData = require("../helpers/encryptHelper");
 
 // Get a single user by Aadhaar number / firstName / lastName / userId
 
@@ -14,7 +15,12 @@ const getUserByAadhaarNumber = async (req, res) => {
 
     let whereClause = {};
     if (aadhaarNumber) {
-      whereClause.aadhaar_number = aadhaarNumber;
+      // Decrypt the aadhaarNumber
+      const decryptedAadhaarNumber = decryptData.decryptData(aadhaarNumber, process.env.secretKey);
+      if (decryptedAadhaarNumber === null) {
+        return res.status(400).send({ success: false, message: "Invalid aadhaarNumber" });
+      }
+      whereClause.aadhaar_number = decryptedAadhaarNumber;
     }
     if (firstName) {
       whereClause.first_name = { [Op.iLike]: firstName.toLowerCase() };
@@ -41,6 +47,65 @@ const getUserByAadhaarNumber = async (req, res) => {
   }
 };
 
+// const getUserByAadhaarNumber = async (req, res) => {
+//   try {
+//     const { aadhaarNumber, firstName, lastName, userId } = req.query;
+
+//     if (!aadhaarNumber && !firstName && !lastName && !userId) {
+//       return res.status(404).send({ success: false, message: "No user found" });
+//     }
+
+//     let whereClause = {};
+//     if (aadhaarNumber) {
+//       const decryptedAadhaarNumber = decryptData.decryptData(aadhaarNumber, process.env.secretKey);
+//       console.log("Decrypted Aadhaar Number:", decryptedAadhaarNumber);
+
+//       whereClause.aadhaar_number = decryptedAadhaarNumber;
+//     }
+//     if (firstName) {
+//       whereClause.first_name = { [Op.iLike]: firstName.toLowerCase() };
+//     }
+//     if (lastName) {
+//       whereClause.last_name = { [Op.iLike]: lastName.toLowerCase() };
+//     }
+//     if (userId) {
+//       whereClause.user_id = userId;
+//     }
+
+//     console.log("Where Clause:", whereClause);
+
+//     const users = await User.findAll({
+//       where: whereClause,
+//     });
+
+//     console.log("Users:", users);
+
+//     if (users.length === 0) {
+//       return res.status(404).send({ success: false, message: "User not found" });
+//     }
+
+//     const decryptedUsers = users.map((user) => {
+//       const decryptedAadhaarNumber = decryptData.decryptData(
+//         user.aadhaar_number,
+//         process.env.secretKey
+//       );
+
+//       // Create a new object with the decrypted aadhaar_number
+//       const decryptedUser = {
+//         ...user.toJSON(),
+//         aadhaar_number: decryptedAadhaarNumber,
+//       };
+
+//       return decryptedUser;
+//     });
+
+//     return res.json(decryptedUsers);
+//   } catch (error) {
+//     console.error(error);
+//     return res.status(500).send({ success: false, message: "Internal Server Error" });
+//   }
+// };
+
 // Get all users
 const getAllUsers = async (req, res) => {
   try {
@@ -57,10 +122,27 @@ const getAllUsers = async (req, res) => {
       return res.status(404).send({ success: false, message: "No users found" });
     }
 
+    const decryptedUsers = await Promise.all(
+      users.rows.map(async (user) => {
+        const decryptedAadhaarNumber = decryptData.decryptData(
+          user.aadhaar_number,
+          process.env.secretKey
+        );
+
+        // Create a new object with the decrypted aadhaar_number
+        const decryptedUser = {
+          ...user.toJSON(),
+          aadhaar_number: decryptedAadhaarNumber,
+        };
+
+        return decryptedUser;
+      })
+    );
+
     const totalPages = Math.ceil(users.count / limit); // Calculate the total number of pages
 
     return res.json({
-      users: users.rows,
+      users: decryptedUsers,
       totalUsers: users.count,
       totalPages,
       currentPage: page,
@@ -86,7 +168,18 @@ const getSingleUser = async (req, res) => {
       return res.status(404).send({ success: false, message: "User not found" });
     }
 
-    return res.json(user);
+    // Decrypt the aadhaar_number
+    const decryptedAadhaarNumber = decryptData.decryptData(
+      user.aadhaar_number,
+      process.env.secretKey
+    );
+
+    // Create a new object with the decrypted aadhaar_number
+    const decryptedUser = {
+      ...user.toJSON(),
+      aadhaar_number: decryptedAadhaarNumber,
+    };
+    return res.json(decryptedUser);
   } catch (error) {
     console.error(error);
     return res.status(500).send({ success: false, message: "Internal Server Error" });

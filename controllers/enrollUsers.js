@@ -3,6 +3,7 @@ const multiparty = require("multiparty");
 const fileHelper = require("../helpers/fileHelper");
 const User = db.users;
 const Volunteer = db.volunteers;
+const encryptData = require("../helpers/encryptHelper");
 
 async function enrollPatients(req, res) {
   try {
@@ -46,9 +47,21 @@ async function enrollPatients(req, res) {
         return res.status(400).send({ success: false, message: "Volunteer not found" });
       }
 
+      // Validate Aadhaar number
+      if (!/^\d{12}$/.test(aadhaar_number)) {
+        return res
+          .status(400)
+          .send({ success: false, message: "Aadhaar number should be a valid 12-digit number" });
+      }
+
+      const secretKey = process.env.secretKey;
+      const encryptedAadhaarNumber = encryptData.encryptData(aadhaar_number, secretKey);
+      // const originalAadhaarNumber = decryptData(encryptedAadhaarNumber, secretKey);
+      // console.log(originalAadhaarNumber);
+
       const existingUser = await User.findOne({
         where: {
-          aadhaar_number: aadhaar_number,
+          aadhaar_number: encryptedAadhaarNumber,
         },
       });
 
@@ -68,7 +81,7 @@ async function enrollPatients(req, res) {
         first_name: first_name,
         last_name: last_name,
         phone: phone,
-        aadhaar_number: aadhaar_number,
+        aadhaar_number: encryptedAadhaarNumber,
         gender: gender,
         date_of_birth: date_of_birth,
         enrollment_status: enrollment_status,
