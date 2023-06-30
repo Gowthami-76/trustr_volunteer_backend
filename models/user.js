@@ -61,6 +61,14 @@ module.exports = (sequelize, DataTypes) => {
         type: DataTypes.FLOAT,
         allowNull: true,
       },
+      aadhaar_front: {
+        type: DataTypes.TEXT,
+        allowNull: true,
+      },
+      aadhaar_back: {
+        type: DataTypes.TEXT,
+        allowNull: true,
+      },
       enrollment_status: {
         type: DataTypes.ENUM("active", "pending"),
         allowNull: true,

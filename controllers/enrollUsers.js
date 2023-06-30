@@ -77,13 +77,14 @@ async function enrollPatients(req, res) {
         return res.status(400).send({ success: false, message: "Aadhaar number already exists" });
       }
 
+      const dateOfBirth = date_of_birth.split("/").reverse().join("-");
       const user = await User.create({
         first_name: first_name,
         last_name: last_name,
         phone: phone,
         aadhaar_number: encryptedAadhaarNumber,
         gender: gender,
-        date_of_birth: date_of_birth,
+        date_of_birth: dateOfBirth,
         enrollment_status: enrollment_status,
         volunteer_id: volunteer_id,
         height: height,

@@ -3,12 +3,14 @@
 module.exports = {
   up: async (queryInterface, Sequelize) => {
     await queryInterface.addColumn("users", "aadhaar_front", {
-      type: Sequelize.STRING,
+      type: Sequelize.TEXT,
       allowNull: true,
+      len: 1000,
     });
     await queryInterface.addColumn("users", "aadhaar_back", {
-      type: Sequelize.STRING,
+      type: Sequelize.TEXT,
       allowNull: true,
+      len: 1000,
     });
   },
 
