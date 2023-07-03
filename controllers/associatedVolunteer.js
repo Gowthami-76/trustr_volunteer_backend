@@ -42,6 +42,8 @@ const getAssociatedUsers = async (req, res) => {
         return res.status(404).send({ success: false, message: "No Associations Found" });
       }
 
+      const totalUsersEnrolled = users.length;
+
       const formattedUsers = [];
 
       for (const user of users) {
@@ -69,7 +71,12 @@ const getAssociatedUsers = async (req, res) => {
         formattedUsers.push(formattedUser);
       }
 
-      return res.status(200).send(formattedUsers);
+      const response = {
+        total_users_enrolled: totalUsersEnrolled,
+        users: formattedUsers,
+      };
+
+      return res.status(200).send(response);
     });
   } catch (error) {
     console.log(error);
