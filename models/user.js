@@ -57,10 +57,6 @@ module.exports = (sequelize, DataTypes) => {
         type: DataTypes.TEXT,
         allowNull: true,
       },
-      height: {
-        type: DataTypes.FLOAT,
-        allowNull: true,
-      },
       aadhaar_front: {
         type: DataTypes.TEXT,
         allowNull: true,
