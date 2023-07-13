@@ -29,10 +29,13 @@ const getAssociatedUsers = async (req, res) => {
         return res.status(404).send({ success: false, message: "Volunteer not found" });
       }
 
+      const locationId = req.params.locationId; // Assuming locationId is passed as a parameter
+
       const users = await User.findAll({
         where: {
-          volunteer_id: volunteerId,
+          location_id: locationId,
         },
+        order: [["user_id", "DESC"]],
         attributes: {
           include: ["aadhaar_front", "aadhaar_back"],
         },

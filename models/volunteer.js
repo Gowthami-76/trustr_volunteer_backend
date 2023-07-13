@@ -10,6 +10,7 @@ module.exports = (sequelize, DataTypes) => {
         foreignKey: "volunteer_id",
         as: "users", // Add this line to specify the alias for the association
       });
+      Volunteer.belongsTo(models.Location, { foreignKey: "location_id" });
     }
   }
 
@@ -55,12 +56,17 @@ module.exports = (sequelize, DataTypes) => {
         type: DataTypes.STRING,
         allowNull: true,
       },
+      location_id: {
+        type: DataTypes.INTEGER,
+        allowNull: true,
+      },
       // token_version: {
       //   type: DataTypes.INTEGER,
       //   allowNull: false,
       //   defaultValue: 0,
       // },
     },
+
     {
       sequelize,
       modelName: "Volunteer",

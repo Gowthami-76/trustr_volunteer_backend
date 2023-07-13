@@ -26,6 +26,12 @@ db.sequelize = sequelize;
 db.volunteers = require("./volunteer")(sequelize, DataTypes);
 db.users = require("./user")(sequelize, DataTypes);
 db.userVitals = require("./userVitals")(sequelize, DataTypes);
+db.Location = require("./Location")(sequelize, DataTypes);
+db.Leader = require("./Leader")(sequelize, DataTypes);
+
+// Define associations
+db.Location.associate(db);
+db.Leader.associate(db);
 
 //exporting the module
 module.exports = db;

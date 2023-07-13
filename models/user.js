@@ -9,6 +9,7 @@ module.exports = (sequelize, DataTypes) => {
         foreignKey: "volunteer_id",
       });
       User.hasMany(models.UserVital, { foreignKey: "user_id" });
+      User.belongsTo(models.Location, { foreignKey: "location_id" });
     }
   }
 
@@ -80,6 +81,10 @@ module.exports = (sequelize, DataTypes) => {
         allowNull: false,
         defaultValue: DataTypes.NOW,
         field: "updated_at", // Use the actual column name in the database
+      },
+      location_id: {
+        type: DataTypes.INTEGER,
+        allowNull: true,
       },
     },
     {
