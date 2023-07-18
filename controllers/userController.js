@@ -308,8 +308,32 @@ const getSingleUser = async (req, res) => {
   }
 };
 
+const updateUserStatus = async (req, res) => {
+  const { userId, status } = req.body; // Assuming the front-end sends the user ID and new status in the request body
+
+  try {
+    const user = await User.findOne({ where: { user_id: userId } });
+
+    if (!user) {
+      return res.status(404).send({ success: false, message: "User not found" });
+    }
+
+    const updatedUser = await User.update({ status }, { where: { user_id: userId } });
+
+    if (updatedUser[0] === 0) {
+      return res.status(500).send({ success: false, message: "Failed to update user status" });
+    }
+
+    return res.json({ success: true, message: "User status updated successfully" });
+  } catch (error) {
+    console.error(error);
+    return res.status(500).send({ success: false, message: "Internal Server Error" });
+  }
+};
+
 module.exports = {
   getUserByAadhaarNumber,
   getAllUsers,
   getSingleUser,
+  updateUserStatus,
 };

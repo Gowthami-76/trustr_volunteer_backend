@@ -48,6 +48,7 @@ app.get(
 );
 app.post("/saveVitals", binahController.saveBinah);
 app.get("/getVitals", binahController.getBinahData);
+app.post("/api/updateUserStatus", validateToken, userController.updateUserStatus);
 
 // Endpoint for retrieving all locations with associated leaders
 app.get("/locations", async (req, res) => {
