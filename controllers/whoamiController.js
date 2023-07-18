@@ -82,13 +82,13 @@ exports.editVolunteerInfo = async (req, res) => {
 
       // Check for unchanged values
       if (
-        (req.body.first_name === volunteer.first_name &&
-          req.body.last_name === volunteer.last_name &&
-          req.body.phone === volunteer.phone &&
-          req.body.gender === volunteer.gender &&
-          req.body.email === volunteer.email &&
-          req.body.date_of_birth === volunteer.date_of_birth,
-        req.body.location_id === volunteer.location_id)
+        req.body.first_name === volunteer.first_name &&
+        req.body.last_name === volunteer.last_name &&
+        req.body.phone === volunteer.phone &&
+        req.body.gender === volunteer.gender &&
+        req.body.email === volunteer.email &&
+        req.body.date_of_birth === volunteer.date_of_birth &&
+        req.body.location_id === volunteer.location_id
       ) {
         return res
           .status(400)
