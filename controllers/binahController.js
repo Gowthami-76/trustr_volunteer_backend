@@ -2,6 +2,7 @@ const db = require("../models");
 const UserVital = db.userVitals;
 const User = db.users;
 const Volunteer = db.volunteers;
+const Location = db.Location;
 
 module.exports.saveBinah = async (req, res) => {
   try {
@@ -29,6 +30,15 @@ module.exports.saveBinah = async (req, res) => {
       return res.status(400).send({ success: false, message: "Volunteer not found" });
     }
 
+    // Fetch the location_id from the users table
+    const { location_id } = existingUser;
+
+    if (!location_id) {
+      return res
+        .status(400)
+        .send({ success: false, message: "Location ID not found in the users table" });
+    }
+
     const binahData = await UserVital.create({
       hr: hr,
       spo2: spo2,
@@ -37,6 +47,7 @@ module.exports.saveBinah = async (req, res) => {
       bp: bp,
       user_id: user_id,
       volunteer_id: volunteer_id,
+      location_id: location_id, // Assuming the location_id is stored in the "id" field of the location object
     });
 
     return res.status(200).send(binahData);
@@ -56,6 +67,7 @@ module.exports.getBinahData = async (req, res) => {
 
     const binahData = await UserVital.findAll({
       where: { user_id: user_id },
+      attributes: ["id", "hr", "spo2", "br", "sl", "bp", "location_id"], // Include the location_id attribute
     });
 
     if (binahData.length === 0) {

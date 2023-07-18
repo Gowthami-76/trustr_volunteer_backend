@@ -70,6 +70,11 @@ module.exports = (sequelize, DataTypes) => {
         type: DataTypes.ENUM("active", "pending"),
         allowNull: true,
       },
+      status: {
+        type: DataTypes.ENUM("registered", "vitals completed"),
+        defaultValue: "registered",
+        allowNull: false,
+      },
       createdAt: {
         type: DataTypes.DATE,
         allowNull: false,

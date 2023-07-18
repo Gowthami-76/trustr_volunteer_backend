@@ -41,6 +41,7 @@ exports.getVolunteerInfo = async (req, res) => {
         gender: volunteer.gender,
         email: volunteer.email,
         date_of_birth: volunteer.date_of_birth,
+        location_id: volunteer.location_id,
       });
     });
   } catch (error) {
@@ -81,12 +82,13 @@ exports.editVolunteerInfo = async (req, res) => {
 
       // Check for unchanged values
       if (
-        req.body.first_name === volunteer.first_name &&
-        req.body.last_name === volunteer.last_name &&
-        req.body.phone === volunteer.phone &&
-        req.body.gender === volunteer.gender &&
-        req.body.email === volunteer.email &&
-        req.body.date_of_birth === volunteer.date_of_birth
+        (req.body.first_name === volunteer.first_name &&
+          req.body.last_name === volunteer.last_name &&
+          req.body.phone === volunteer.phone &&
+          req.body.gender === volunteer.gender &&
+          req.body.email === volunteer.email &&
+          req.body.date_of_birth === volunteer.date_of_birth,
+        req.body.location_id === volunteer.location_id)
       ) {
         return res
           .status(400)
@@ -96,12 +98,10 @@ exports.editVolunteerInfo = async (req, res) => {
       // Validate gender value
       const gender = req.body.gender && req.body.gender.toLowerCase();
       if (gender && !["male", "female", "others"].includes(gender)) {
-        return res
-          .status(400)
-          .send({
-            success: false,
-            message: "Invalid gender value. Allowed values: male, female, others",
-          });
+        return res.status(400).send({
+          success: false,
+          message: "Invalid gender value. Allowed values: male, female, others",
+        });
       }
 
       // Update the volunteer's information
@@ -113,6 +113,7 @@ exports.editVolunteerInfo = async (req, res) => {
           gender: gender || volunteer.gender,
           email: req.body.email || volunteer.email,
           date_of_birth: req.body.date_of_birth || volunteer.date_of_birth,
+          location_id: req.body.location_id || volunteer.location_id,
         },
         {
           where: {
