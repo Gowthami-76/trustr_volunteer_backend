@@ -67,7 +67,7 @@ module.exports.getBinahData = async (req, res) => {
 
     const binahData = await UserVital.findAll({
       where: { user_id: user_id },
-      attributes: ["id", "hr", "spo2", "br", "sl", "bp", "datetime", "location_id"], // Include the location_id attribute
+      attributes: ["id", "user_id", "hr", "spo2", "br", "sl", "bp", "datetime", "location_id"], // Include the location_id attribute
     });
 
     if (binahData.length === 0) {
