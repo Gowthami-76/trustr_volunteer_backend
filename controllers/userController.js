@@ -26,9 +26,7 @@ const getUserByAadhaarNumber = async (req, res) => {
     if (firstName) {
       whereClause.first_name = { [Op.iLike]: firstName.toLowerCase() };
     }
-    if (lastName) {
-      whereClause.last_name = { [Op.iLike]: lastName.toLowerCase() };
-    }
+
     if (userId) {
       whereClause.user_id = userId;
     }

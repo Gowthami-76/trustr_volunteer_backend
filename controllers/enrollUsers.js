@@ -7,7 +7,6 @@ async function enrollPatients(req, res) {
   try {
     const {
       first_name,
-      last_name,
       phone,
       aadhaar_number,
       gender,
@@ -51,7 +50,6 @@ async function enrollPatients(req, res) {
     const dateOfBirth = date_of_birth.split("/").reverse().join("-");
     const user = await User.create({
       first_name: first_name,
-      last_name: last_name,
       phone: phone,
       aadhaar_number: encryptedAadhaarNumber,
       gender: gender,

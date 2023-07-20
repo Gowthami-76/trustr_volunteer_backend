@@ -3,6 +3,7 @@ const UserVital = db.userVitals;
 const User = db.users;
 const Volunteer = db.volunteers;
 const Location = db.Location;
+const moment = require("moment");
 
 module.exports.saveBinah = async (req, res) => {
   try {
@@ -47,7 +48,7 @@ module.exports.saveBinah = async (req, res) => {
       bp: bp,
       user_id: user_id,
       volunteer_id: volunteer_id,
-      location_id: location_id, // Assuming the location_id is stored in the "id" field of the location object
+      location_id: location_id,
     });
 
     return res.status(200).send(binahData);
@@ -57,6 +58,32 @@ module.exports.saveBinah = async (req, res) => {
   }
 };
 
+// module.exports.getBinahData = async (req, res) => {
+//   try {
+//     const { user_id } = req.query;
+
+//     if (!user_id) {
+//       return res.status(400).send({ success: false, message: "user_id is required" });
+//     }
+
+//     const binahData = await UserVital.findAll({
+//       where: { user_id: user_id },
+//       attributes: ["id", "user_id", "hr", "spo2", "br", "sl", "bp", "datetime", "location_id"],
+//     });
+
+//     if (binahData.length === 0) {
+//       return res
+//         .status(404)
+//         .send({ success: false, message: "No user vitals found for the given user_id" });
+//     }
+
+//     return res.status(200).json(binahData);
+//   } catch (error) {
+//     console.log(error);
+//     return res.status(500).send({ success: false, message: "Internal Server Error" });
+//   }
+// };
+
 module.exports.getBinahData = async (req, res) => {
   try {
     const { user_id } = req.query;
@@ -65,9 +92,17 @@ module.exports.getBinahData = async (req, res) => {
       return res.status(400).send({ success: false, message: "user_id is required" });
     }
 
+    const user = await User.findByPk(user_id, {
+      attributes: ["first_name", "aadhaar_number", "date_of_birth", "gender", "phone"],
+    });
+
+    if (!user) {
+      return res.status(404).send({ success: false, message: "User not found" });
+    }
+
     const binahData = await UserVital.findAll({
       where: { user_id: user_id },
-      attributes: ["id", "user_id", "hr", "spo2", "br", "sl", "bp", "datetime", "location_id"], // Include the location_id attribute
+      attributes: ["id", "user_id", "hr", "spo2", "br", "sl", "bp", "datetime", "location_id"],
     });
 
     if (binahData.length === 0) {
@@ -76,7 +111,14 @@ module.exports.getBinahData = async (req, res) => {
         .send({ success: false, message: "No user vitals found for the given user_id" });
     }
 
-    return res.status(200).json(binahData);
+    const dateOfBirth = moment(user.date_of_birth);
+    const age = moment().diff(dateOfBirth, "years");
+
+    // Convert the user data to JSON and add the 'age' property
+    const userJson = user.toJSON();
+    userJson.age = age;
+
+    return res.status(200).json({ user: userJson, binahData });
   } catch (error) {
     console.log(error);
     return res.status(500).send({ success: false, message: "Internal Server Error" });
