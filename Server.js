@@ -47,21 +47,64 @@ app.get("/getVitals", binahController.getBinahData);
 app.post("/api/updateUserStatus", validateToken, userController.updateUserStatus);
 
 // Endpoint for retrieving all locations with associated leaders
+// app.get("/locations", async (req, res) => {
+//   try {
+//     const locations = await db.Location.findAll({
+//       include: [
+//         {
+//           model: db.Leader,
+//           attributes: {
+//             exclude: ["createdAt", "updatedAt", "locationId"], // Exclude createdAt and updatedAt fields from the included Leader model
+//           },
+//         },
+//       ],
+//       attributes: {
+//         exclude: ["createdAt", "updatedAt"], // Exclude createdAt and updatedAt fields from the Location model
+//       },
+//     });
+//     res.json(locations);
+//   } catch (error) {
+//     console.error(error);
+//     res.status(500).json({ message: "Internal server error" });
+//   }
+// });
+
 app.get("/locations", async (req, res) => {
   try {
-    const locations = await db.Location.findAll({
-      include: [
-        {
-          model: db.Leader,
-          attributes: {
-            exclude: ["createdAt", "updatedAt", "locationId"], // Exclude createdAt and updatedAt fields from the included Leader model
+    const location_id = req.query.location_id;
+    let locations;
+    if (location_id) {
+      locations = await db.Location.findOne({
+        where: { location_id: location_id },
+        include: [
+          {
+            model: db.Leader,
+            attributes: {
+              exclude: ["createdAt", "updatedAt", "locationId"],
+            },
           },
+        ],
+        attributes: {
+          exclude: ["createdAt", "updatedAt"],
         },
-      ],
-      attributes: {
-        exclude: ["createdAt", "updatedAt"], // Exclude createdAt and updatedAt fields from the Location model
-      },
-    });
+      });
+    } else {
+      // If 'location_id' parameter is not provided, fetch all locations
+      locations = await db.Location.findAll({
+        include: [
+          {
+            model: db.Leader,
+            attributes: {
+              exclude: ["createdAt", "updatedAt", "locationId"],
+            },
+          },
+        ],
+        attributes: {
+          exclude: ["createdAt", "updatedAt"],
+        },
+      });
+    }
+
     res.json(locations);
   } catch (error) {
     console.error(error);
@@ -74,7 +117,7 @@ app.get("/leaders", async (req, res) => {
   try {
     const leaders = await db.Leader.findAll({
       attributes: {
-        exclude: ["createdAt", "updatedAt"], // Exclude createdAt and updatedAt fields
+        exclude: ["createdAt", "updatedAt"],
       },
     });
     res.json(leaders);

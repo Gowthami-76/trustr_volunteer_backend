@@ -4,6 +4,7 @@ const User = db.users;
 const Volunteer = db.volunteers;
 const Location = db.Location;
 const moment = require("moment");
+const decryptData = require("../helpers/encryptHelper");
 
 module.exports.saveBinah = async (req, res) => {
   try {
@@ -66,6 +67,14 @@ module.exports.saveBinah = async (req, res) => {
 //       return res.status(400).send({ success: false, message: "user_id is required" });
 //     }
 
+//     const user = await User.findByPk(user_id, {
+//       attributes: ["first_name", "aadhaar_number", "date_of_birth", "gender", "phone"],
+//     });
+
+//     if (!user) {
+//       return res.status(404).send({ success: false, message: "User not found" });
+//     }
+
 //     const binahData = await UserVital.findAll({
 //       where: { user_id: user_id },
 //       attributes: ["id", "user_id", "hr", "spo2", "br", "sl", "bp", "datetime", "location_id"],
@@ -77,12 +86,21 @@ module.exports.saveBinah = async (req, res) => {
 //         .send({ success: false, message: "No user vitals found for the given user_id" });
 //     }
 
-//     return res.status(200).json(binahData);
+//     const dateOfBirth = moment(user.date_of_birth);
+//     const age = moment().diff(dateOfBirth, "years");
+
+//     // Convert the user data to JSON and add the 'age' property
+//     const userJson = user.toJSON();
+//     userJson.age = age;
+
+//     return res.status(200).json({ user: userJson, binahData });
 //   } catch (error) {
 //     console.log(error);
 //     return res.status(500).send({ success: false, message: "Internal Server Error" });
 //   }
 // };
+
+// Assuming you have a decrypt helper function named decryptData
 
 module.exports.getBinahData = async (req, res) => {
   try {
@@ -100,6 +118,10 @@ module.exports.getBinahData = async (req, res) => {
       return res.status(404).send({ success: false, message: "User not found" });
     }
 
+    // Decrypt the aadhaar_number
+    const secretKey = process.env.secretKey;
+    const decryptedAadhaarNumber = decryptData.decryptData(user.aadhaar_number, secretKey);
+
     const binahData = await UserVital.findAll({
       where: { user_id: user_id },
       attributes: ["id", "user_id", "hr", "spo2", "br", "sl", "bp", "datetime", "location_id"],
@@ -114,9 +136,10 @@ module.exports.getBinahData = async (req, res) => {
     const dateOfBirth = moment(user.date_of_birth);
     const age = moment().diff(dateOfBirth, "years");
 
-    // Convert the user data to JSON and add the 'age' property
+    // Convert the user data to JSON and add the 'age' property and decrypted aadhaar_number
     const userJson = user.toJSON();
     userJson.age = age;
+    userJson.aadhaar_number = decryptedAadhaarNumber;
 
     return res.status(200).json({ user: userJson, binahData });
   } catch (error) {
