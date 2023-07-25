@@ -14,6 +14,8 @@ async function enrollPatients(req, res) {
       enrollment_status,
       volunteer_id,
       location_id,
+      aadhaar_front,
+      aadhaar_back,
     } = req.body;
 
     // Check if volunteer_id is present
@@ -57,6 +59,8 @@ async function enrollPatients(req, res) {
       enrollment_status: enrollment_status,
       volunteer_id: volunteer_id,
       location_id: location_id,
+      aadhaar_front: aadhaar_front,
+      aadhaar_back: aadhaar_back,
     });
 
     return res.status(200).send(user);
