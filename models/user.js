@@ -88,6 +88,14 @@ module.exports = (sequelize, DataTypes) => {
         type: DataTypes.INTEGER,
         allowNull: true,
       },
+      vitals_by: {
+        type: DataTypes.INTEGER,
+        allowNull: true,
+      },
+      vitals_at: {
+        type: DataTypes.DATE,
+        allowNull: true,
+      },
     },
     {
       sequelize,
