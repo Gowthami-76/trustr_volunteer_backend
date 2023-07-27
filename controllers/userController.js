@@ -3,6 +3,7 @@ const User = db.users;
 const UserVital = db.userVitals;
 const { Op } = require("sequelize");
 const decryptData = require("../helpers/encryptHelper");
+const moment = require("moment");
 
 // Get a single user by Aadhaar number / firstName / lastName / userId
 
@@ -150,10 +151,14 @@ const getSingleUser = async (req, res) => {
       process.env.secretKey
     );
 
-    // Create a new object with the decrypted aadhaar_number
+    const dateOfBirth = moment(user.date_of_birth);
+    const age = moment().diff(dateOfBirth, "years");
+
+    // Create a new object with the decrypted aadhaar_number and age
     const decryptedUser = {
       ...user.toJSON(),
       aadhaar_number: decryptedAadhaarNumber,
+      age: age,
     };
     return res.json(decryptedUser);
   } catch (error) {
@@ -163,8 +168,7 @@ const getSingleUser = async (req, res) => {
 };
 
 const updateUserStatus = async (req, res) => {
-  const { userId, status } = req.body; // Assuming the front-end sends the user ID and new status in the request body
-
+  const { userId, status } = req.body;
   try {
     const user = await User.findOne({ where: { user_id: userId } });
 

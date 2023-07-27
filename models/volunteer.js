@@ -60,6 +60,10 @@ module.exports = (sequelize, DataTypes) => {
         type: DataTypes.INTEGER,
         allowNull: true,
       },
+      location_name: {
+        type: DataTypes.STRING(255),
+        allowNull: true,
+      },
       // token_version: {
       //   type: DataTypes.INTEGER,
       //   allowNull: false,
