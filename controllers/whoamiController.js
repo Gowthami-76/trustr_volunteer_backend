@@ -42,6 +42,7 @@ exports.getVolunteerInfo = async (req, res) => {
         email: volunteer.email,
         date_of_birth: volunteer.date_of_birth,
         location_id: volunteer.location_id,
+        location_name: volunteer.location_name,
       });
     });
   } catch (error) {
