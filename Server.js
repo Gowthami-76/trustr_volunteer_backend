@@ -13,6 +13,7 @@ const associatedVolunteer = require("./controllers/associatedVolunteer");
 const enrollPatients = require("./controllers/enrollUsers");
 const validateToken = require("./middlewares/validateToken");
 const binahController = require("./controllers/binahController");
+const getCompletedVitalsUsers = require("./controllers/getCompletedVitalsUsers");
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
@@ -45,7 +46,11 @@ app.get(
 app.post("/saveVitals", binahController.saveBinah);
 app.get("/getVitals", binahController.getBinahData);
 app.post("/api/updateUserStatus", validateToken, userController.updateUserStatus);
-
+app.get(
+  "/api/users/getCompletedVitalsUsers/:locationId",
+  validateToken,
+  getCompletedVitalsUsers.getCompletedVitalsUsers
+);
 // Endpoint for retrieving all locations with associated leaders
 // app.get("/locations", async (req, res) => {
 //   try {

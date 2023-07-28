@@ -88,6 +88,8 @@ const getAllUsers = async (req, res) => {
 
       let status = user.status;
       let registeredBy = user.volunteer_id;
+      let address = user.address;
+      let zipcode = user.zipcode;
       let vitalsBy = null;
       let vitalsAt = null;
 
@@ -109,6 +111,8 @@ const getAllUsers = async (req, res) => {
       user.registered_by = registeredBy;
       user.vitals_by = vitalsBy;
       user.vitals_at = vitalsAt;
+      user.zipcode = zipcode;
+      user.address = address;
     }
 
     const totalPages = Math.ceil(users.count / limit); // Calculate the total number of pages
