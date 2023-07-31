@@ -26,9 +26,10 @@ module.exports.getBinahData = async (req, res) => {
     const secretKey = process.env.secretKey;
     const decryptedAadhaarNumber = decryptData.decryptData(user.aadhaar_number, secretKey);
 
-    const binahData = await UserVital.findAll({
+    const binahData = await UserVital.findOne({
       where: { user_id: user_id },
       attributes: ["id", "user_id", "hr", "spo2", "br", "sl", "bp", "datetime", "location_id"],
+      order: [["datetime", "DESC"]],
     });
 
     if (binahData.length === 0) {

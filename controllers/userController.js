@@ -149,7 +149,6 @@ const getSingleUser = async (req, res) => {
       return res.status(404).send({ success: false, message: "User not found" });
     }
 
-    // Decrypt the aadhaar_number
     const decryptedAadhaarNumber = decryptData.decryptData(
       user.aadhaar_number,
       process.env.secretKey
@@ -158,12 +157,18 @@ const getSingleUser = async (req, res) => {
     const dateOfBirth = moment(user.date_of_birth);
     const age = moment().diff(dateOfBirth, "years");
 
-    // Create a new object with the decrypted aadhaar_number and age
+    const userVitals = await UserVital.findOne({
+      where: { user_id: userId },
+      order: [["id", "DESC"]],
+    });
+
     const decryptedUser = {
       ...user.toJSON(),
       aadhaar_number: decryptedAadhaarNumber,
       age: age,
+      userVitals: userVitals ? userVitals.toJSON() : {},
     };
+
     return res.json(decryptedUser);
   } catch (error) {
     console.error(error);
