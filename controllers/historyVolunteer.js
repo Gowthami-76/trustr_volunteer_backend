@@ -2,13 +2,12 @@ const jwt = require("jsonwebtoken");
 const db = require("../models");
 const User = db.users;
 const Volunteer = db.volunteers;
-const UserVital = db.userVitals;
 const decryptData = require("../helpers/encryptHelper");
-const Sequelize = require("sequelize");
 
 const historyVolunteer = async (req, res) => {
   try {
     const token = req.headers["x-access-token"];
+    const { volunteer_id } = req.query;
 
     if (!token) {
       return res.status(401).send({ success: false, message: "Token is missing" });
@@ -25,21 +24,13 @@ const historyVolunteer = async (req, res) => {
         return res.status(400).send({ success: false, message: "Volunteer ID is missing" });
       }
 
-      const volunteer = await Volunteer.findByPk(volunteerId);
+      const volunteer = await Volunteer.findByPk(volunteer_id);
       if (!volunteer) {
         return res.status(404).send({ success: false, message: "Volunteer not found" });
       }
 
       const users = await User.findAll({
-        include: [
-          {
-            model: UserVital,
-            where: { volunteer_id: volunteerId },
-            required: true, // Perform an INNER JOIN to get only users with vitals completed
-            order: [["datetime", "DESC"]],
-            limit: 1, // Fetch only the latest UserVital record for each user
-          },
-        ],
+        where: { volunteer_id: volunteer_id },
         order: [["user_id", "DESC"]],
         attributes: {
           include: ["aadhaar_front", "aadhaar_back"],
@@ -66,7 +57,6 @@ const historyVolunteer = async (req, res) => {
         };
 
         formattedUser.aadhaar_number = decryptedAadhaarNumber;
-        formattedUser.user_vitals = user.user_vitals;
 
         formattedUsers.push(formattedUser);
       }
