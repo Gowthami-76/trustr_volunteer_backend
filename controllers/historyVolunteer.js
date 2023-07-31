@@ -4,8 +4,9 @@ const User = db.users;
 const Volunteer = db.volunteers;
 const UserVital = db.userVitals;
 const decryptData = require("../helpers/encryptHelper");
+const Sequelize = require("sequelize");
 
-const getCompletedVitalsUsers = async (req, res) => {
+const historyVolunteer = async (req, res) => {
   try {
     const token = req.headers["x-access-token"];
 
@@ -29,22 +30,27 @@ const getCompletedVitalsUsers = async (req, res) => {
         return res.status(404).send({ success: false, message: "Volunteer not found" });
       }
 
-      const locationId = req.params.locationId; // Assuming locationId is passed as a parameter
-
       const users = await User.findAll({
-        where: {
-          location_id: locationId,
-        },
+        include: [
+          {
+            model: UserVital,
+            where: { volunteer_id: volunteerId },
+            required: true, // Perform an INNER JOIN to get only users with vitals completed
+            order: [["datetime", "DESC"]],
+            limit: 1, // Fetch only the latest UserVital record for each user
+          },
+        ],
         order: [["user_id", "DESC"]],
         attributes: {
           include: ["aadhaar_front", "aadhaar_back"],
         },
       });
-      console.log("users:", users); // Debugging users data
 
       if (users.length === 0) {
         return res.status(404).send({ success: false, message: "No Associations Found" });
       }
+
+      const totalUsersEnrolled = users.length;
 
       const formattedUsers = [];
 
@@ -54,32 +60,16 @@ const getCompletedVitalsUsers = async (req, res) => {
           process.env.secretKey
         );
 
-        const latestUserVital = await UserVital.findOne({
-          where: {
-            user_id: user.user_id,
-          },
-          order: [["datetime", "DESC"]],
-          raw: true,
-        });
+        const formattedUser = {
+          unique_id: user.user_id,
+          ...user.toJSON(),
+        };
 
-        console.log("user:", user); // Debugging user data
-        console.log("latestUserVital:", latestUserVital); // Debugging latestUserVital data
+        formattedUser.aadhaar_number = decryptedAadhaarNumber;
+        formattedUser.user_vitals = user.user_vitals;
 
-        // Check if the latestUserVital exists and includes vitals data
-        if (latestUserVital && latestUserVital.vitals_completed) {
-          const formattedUser = {
-            unique_id: user.user_id,
-            ...user.toJSON(),
-          };
-
-          formattedUser.aadhaar_number = decryptedAadhaarNumber;
-          formattedUser.user_vitals = latestUserVital ? [latestUserVital] : [];
-
-          formattedUsers.push(formattedUser);
-        }
+        formattedUsers.push(formattedUser);
       }
-
-      const totalUsersEnrolled = formattedUsers.length;
 
       const response = {
         total_users_enrolled: totalUsersEnrolled,
@@ -93,6 +83,7 @@ const getCompletedVitalsUsers = async (req, res) => {
     return res.status(500).send({ success: false, message: "Internal Server Error" });
   }
 };
+
 module.exports = {
-  getCompletedVitalsUsers,
+  historyVolunteer,
 };

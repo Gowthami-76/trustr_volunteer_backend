@@ -29,7 +29,7 @@ const decryptData = require("../helpers/encryptHelper");
 //         return res.status(404).send({ success: false, message: "Volunteer not found" });
 //       }
 
-//       const locationId = req.params.locationId; // Assuming locationId is passed as a parameter
+//       const locationId = req.params.locationId;
 
 //       const users = await User.findAll({
 //         where: {
@@ -87,7 +87,7 @@ const decryptData = require("../helpers/encryptHelper");
 //   }
 // };
 
-//we are sending all the patients who are enrolled but not tok the vitals yet.
+// we are sending all the patients who are enrolled but not tok the vitals yet.
 
 const getAssociatedUsers = async (req, res) => {
   try {

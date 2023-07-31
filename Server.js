@@ -13,7 +13,7 @@ const associatedVolunteer = require("./controllers/associatedVolunteer");
 const enrollPatients = require("./controllers/enrollUsers");
 const validateToken = require("./middlewares/validateToken");
 const binahController = require("./controllers/binahController");
-const getCompletedVitalsUsers = require("./controllers/getCompletedVitalsUsers");
+const historyVolunteer = require("./controllers/historyVolunteer");
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
@@ -47,32 +47,10 @@ app.post("/saveVitals", binahController.saveBinah);
 app.get("/getVitals", binahController.getBinahData);
 app.post("/api/updateUserStatus", validateToken, userController.updateUserStatus);
 app.get(
-  "/api/users/getCompletedVitalsUsers/:locationId",
+  "/api/users/historyVolunteer/:volunteerId",
   validateToken,
-  getCompletedVitalsUsers.getCompletedVitalsUsers
+  historyVolunteer.historyVolunteer
 );
-// Endpoint for retrieving all locations with associated leaders
-// app.get("/locations", async (req, res) => {
-//   try {
-//     const locations = await db.Location.findAll({
-//       include: [
-//         {
-//           model: db.Leader,
-//           attributes: {
-//             exclude: ["createdAt", "updatedAt", "locationId"], // Exclude createdAt and updatedAt fields from the included Leader model
-//           },
-//         },
-//       ],
-//       attributes: {
-//         exclude: ["createdAt", "updatedAt"], // Exclude createdAt and updatedAt fields from the Location model
-//       },
-//     });
-//     res.json(locations);
-//   } catch (error) {
-//     console.error(error);
-//     res.status(500).json({ message: "Internal server error" });
-//   }
-// });
 
 app.get("/locations", async (req, res) => {
   try {
@@ -94,7 +72,6 @@ app.get("/locations", async (req, res) => {
         },
       });
     } else {
-      // If 'location_id' parameter is not provided, fetch all locations
       locations = await db.Location.findAll({
         include: [
           {
@@ -117,7 +94,6 @@ app.get("/locations", async (req, res) => {
   }
 });
 
-// Endpoint for retrieving all leaders
 app.get("/leaders", async (req, res) => {
   try {
     const leaders = await db.Leader.findAll({
